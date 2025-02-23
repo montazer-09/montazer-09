@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الربح الذكية | الإصدار المتقدم</title>
+    
+    <!-- Meta Tags for SEO -->
+    <meta name="description" content="منصة الربح الذكية - اربح المال من مشاهدة الإعلانات وإكمال المهام">
+    <meta name="keywords" content="ربح المال, إعلانات, مهام, جوجل ادسنس">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics.js"></script>
+    
+    <!-- Google AdSense & AdMob -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-YOUR-ID"></script>
+    
+    <!-- Styling and UI Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Advanced Styling */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #10b981;
+            --accent-color: #ef4444;
+            --background-light: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        /* Enhanced Body Styling */
+        body {
+            background: linear-gradient(135deg, var(--background-light) 0%, #e2e8f0 100%);
+            font-family: 'Cairo', sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Advanced Container Styling */
+        .smart-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin: 2rem auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .smart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        /* Enhanced Button Styles */
+        .btn-smart {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-smart::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn-smart:hover::after {
+            width: 300%;
+            height: 300%;
+        }
+
+        /* Advanced Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Advanced Card Designs */
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Progress Indicators */
+        .progress-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-color) var(--progress), #e2e8f0 0deg);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-circle::before {
+            content: attr(data-progress) '%';
+            position: absolute;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        /* Advanced Loading States */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Advanced Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast-message {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Authentication Container -->
+    <div id="authContainer" class="container smart-container slide-up">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <img src="logo.png" alt="Logo" class="mb-4 rounded-circle" width="150">
+                <h1 class="mb-4">منصة الربح الذكية</h1>
+                <p class="lead mb-4">انضم إلينا واربح المال من خلال مشاهدة الإعلانات وإكمال المهام</p>
+                
+                <!-- Authentication Buttons -->
+                <div class="d-grid gap-3">
+                    <button onclick="signInWithGoogle()" class="btn btn-smart btn-light">
+                        <i class="fab fa-google me-2"></i> تسجيل الدخول عبر Google
+                    </button>
+                    <button onclick="signInAsGuest()" class="btn btn-smart btn-secondary">
+                        <i class="fas fa-user-secret me-2"></i> الدخول كضيف
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Dashboard Container -->
+    <div id="dashboardContainer" class="container smart-container d-none">
+        <!-- User Profile Section -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <img id="userAvatar" class="rounded-circle mb-3" width="100" height="100">
+                    <h3 id="userName" class="mb-2"></h3>
+                    <p id="userEmail" class="text-muted"></p>
+                    <div class="progress-circle" data-progress="0">
+                        <div class="inner-circle"></div>
+                    </div>
+                    <p class="mt-2">المستوى: <span id="userLevel">1</span></p>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="feature-card">
+                    <h4>📊 إحصائياتك</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <h5>💰 رصيدك الحالي</h5>
+                                <p id="userBalance" class="h3">$0.00</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <h5>🎯 المهام المكتملة</h5>
+                                <p id="completedTasks" class="h3">0</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <h5>👥 الإحالات</h5>
+                                <p id="referrals" class="h3">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AdMob Container -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="feature-card">
+                    <h4>📺 شاهد وأربح</h4>
+                    <div id="adMobContainer" class="text-center">
+                        <!-- AdMob Ad will be inserted here -->
+                    </div>
+                    <div class="mt-3">
+                        <button onclick="watchRewardedAd()" class="btn btn-smart btn-primary">
+                            <i class="fas fa-play me-2"></i> مشاهدة إعلان مكافأة
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="feature-card">
+                    <h4>📝 المهام المتاحة</h4>
+                    <div id="tasksContainer" class="row">
+                        <!-- Tasks will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Withdrawal Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="feature-card">
+                    <h4>💳 سحب الأرباح</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select id="withdrawalMethod" class="form-select mb-3">
+                                <option value="paypal">PayPal</option>
+                                <option value="bank">تحويل بنكي</option>
+                                <option value="crypto">عملات رقمية</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" id="withdrawalAmount" class="form-control mb-3" placeholder="المبلغ">
+                        </div>
+                    </div>
+                    <button onclick="initiateWithdrawal()" class="btn btn-smart btn-success">
+                        <i class="fas fa-money-bill-wave me-2"></i> طلب السحب
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+          // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDLMwJ_ogu1xlwOeiV8pdjk2MsF5fA3i3I",
+  authDomain: "adapp-33fda.firebaseapp.com",
+  projectId: "adapp-33fda",
+  storageBucket: "adapp-33fda.firebasestorage.app",
+  messagingSenderId: "915775817893",
+  appId: "1:915775817893:web:9087f530b5fd23d3dde54c",
+  measurementId: "G-RJT2LZ62ZW"
+};
+            // Your Firebase config here
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const analytics = firebase.analytics();
+
+        // Initialize AdMob
+        let rewardedAd = null;
+        function initializeAdMob() {
+            admob.initialize({
+                bannerAdId: 'ca-app-pub-XXXXX/YYYYY',
+                interstitialAdId: 'ca-app-pub-XXXXX/YYYYY',
+                rewardedAdId: 'ca-app-pub-XXXXX/YYYYY'
+            }).then(() => {
+                loadRewardedAd();
+            });
+        }
+
+        function loadRewardedAd() {
+            admob.loadRewardedAd({
+                id: 'ca-app-pub-XXXXX/YYYYY'
+            }).then((ad) => {
+                rewardedAd = ad;
+            });
+        }
+
+        // Enhanced Authentication Functions
+        async function signInWithGoogle() {
+            showLoading();
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                const result = await auth.signInWithPopup(provider);
+                await handleSignInSuccess(result.user);
+            } catch (error) {
+                handleSignInError(error);
+            }
+            hideLoading();
+        }
+
+        async function signInAsGuest() {
+            showLoading();
+            try {
+                const result = await auth.signInAnonymously();
+                await handleSignInSuccess(result.user);
+            } catch (error) {
+                handleSignInError(error);
+            }
+            hideLoading();
+        }
+
+        async function handleSignInSuccess(user) {
+            const userRef = db.collection('users').doc(user.uid);
+            const userData = {
+                uid: user.uid,
+                email: user.email || 'guest',
+                displayName: user.displayName || 'زائر',
+                photoURL: user.photoURL || 'default-avatar.png',
+                level: 1,
+                balance: 0,
+                tasksCompleted: 0,
+                referrals: 0,
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            await userRef.set(userData, { merge: true });
+            showDashboard(userData);
+        }
+
+        function showDashboard(userData) {
+            document.getElementById('authContainer').classList.add('d-none');
+            document.getElementById('dashboardContainer').classList.remove('d-none');
+            updateUserInterface(userData);
+        }
+
+        function updateUserInterface(userData) {
+            document.getElementById('userAvatar').src = userData.photoURL;
+            document.getElementById('userName').textContent = userData.displayName;
+            document.getElementById('userEmail').textContent = userData.email;
+            document.getElementById('userLevel').textContent = userData.level;
+            document.getElementById('userBalance').textContent = `$${userData.balance.toFixed(2)}`;
+            document.getElementById('completedTasks').textContent = userData.tasksCompleted;
+            document.getElementById('referrals').textContent = userData.referrals;
+        }
+
+        // Task Management
+        function loadAvailableTasks() {
+            const tasksContainer = document.getElementById('tasksContainer');
+            tasksContainer.innerHTML = ''; // Clear existing tasks
+
+            // Fetch tasks from Firestore
+            db.collection('tasks').where('isActive', '==', true).get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const task = doc.data();
+                        const taskElement = createTaskElement(task);
+                        tasksContainer.appendChild(taskElement);
+                    });
+                });
+        }
+
+        function createTaskElement(task) {
+            const div = document.createElement('div');
+            div.className = 'col-md-4 mb-3';
+            div.innerHTML = `
+                <div class="feature-card h-100">
+                    <h5>${task.title}</h5>
+                    <p>${task.description}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">$${task.reward}</span>
+                        <button onclick="startTask('${task.id}')" class="btn btn-smart btn-sm btn-primary">
+                            بدء المهمة
+                        </button>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        // AdMob Reward Handler
+        function watchRewardedAd() {
+            if (rewardedAd) {
+                rewardedAd.show().then(() => {
+                    // Reward the user
+                    const reward = 0.5; // \$0.50 per ad view
+                    updateUserBalance(reward);
+                    showToast(`مبروك! ربحت $${reward}`);
+                });
+            } else {
+                showToast('الإعلان غير متوفر حالياً، حاول لاحقاً');
+                loadRewardedAd();
+            }
+        }
+
+        // Utility Functions
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast-message bg-${type}`;
+            toast.textContent = message;
+            document.getElementById('toastContainer').appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeAdMob();
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    handleSignInSuccess(user);
+                }
+            });
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
